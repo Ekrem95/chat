@@ -1,46 +1,58 @@
 const express = require('express');
 const app = express();
 const server = require('http').createServer(app);
-const io = require('socket.io').listen(server);
+const mongo = require('mongodb').MongoClient;
+const client = require('socket.io').listen(server);
 const morgan = require('morgan');
 
-let users = [];
-let connections = [];
+server.listen(process.env.PORT || 4000);
 
 app.use(morgan('dev'));
 
-server.listen(process.env.PORT || 3000);
-
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
+  res.status(200).sendFile(__dirname + '/index.html');
 });
 
-io.sockets.on('connection', (socket) => {
-  connections.push(socket);
-  console.log('%s user', connections.length);
+mongo.connect('mongodb://localhost/chat', (err, db) => {
+  if (err) throw err;
 
-  socket.on('disconnect', (data) => {
-    // if (!socket.username) return;
-    users.splice(users.indexOf(socket.username), 1);
-    updateUsernames();
+  console.log('Connected');
 
-    connections.splice(connections.indexOf(socket), 1);
-    console.log('%s user', connections.length);
+  client.on('connection', (socket) => {
+    let chat = db.collection('chats');
+
+    sendStatus = (s) => {
+      socket.emit('status', s);
+    };
+
+    chat.find().limit(100).sort({ _id: 1 }).toArray((err, res) => {
+      if (err) throw err;
+
+      socket.emit('output', res);
+    });
+
+    socket.on('input', (data) => {
+      let name = data.name;
+      let message = data.message;
+
+      if (name === '' || message === '') {
+        sendStatus('Please enter a name and message');
+      } else {
+        chat.insert({ name: name, message: message }, () => {
+          client.emit('output', [data]);
+
+          sendStatus({
+            message: 'Message sent',
+            clear: true,
+          });
+        });
+      }
+    });
+
+    socket.on('clear', (data) => {
+      chat.remove({}, () => {
+        socket.emit('Cleared');
+      });
+    });
   });
-
-  socket.on('send message', (data) => {
-    console.log(data);
-    io.sockets.emit('new message', { msg: data, user: socket.username });
-  });
-
-  socket.on('new user', (data, callback) => {
-    callback(true);
-    socket.username = data;
-    users.push(socket.username);
-    updateUsernames();
-  });
-
-  function updateUsernames() {
-    io.sockets.emit('get users', users);
-  }
 });
