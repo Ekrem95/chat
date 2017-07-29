@@ -1,0 +1,58 @@
+@mixin form-page-style {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+}
+
+body{
+  background: #000;
+  color: #fff;
+  margin: 0;
+  font-size: 16px;
+
+
+  .login{
+    @include form-page-style;
+    margin-top: 60px;
+
+    .link{
+      width: 100vw;
+      background: rgb(189, 68, 207);
+      color: #fff;
+      height: 30px;
+      font-size: 1.1rem;
+      border: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+    }
+
+    form{
+      @include form-page-style;
+
+      div{
+        @include form-page-style;
+        align-items: flex-start;
+      }
+
+      *{
+        margin: 5px 0;
+        width: 56vw;
+        border: none;
+        border-radius: 3px;
+      }
+      input{
+        background: #fff;
+        height: 26px;
+        padding-left: 3px;
+      }
+      button{
+        height: 30px;
+        background: rgb(189, 68, 207);
+        color: #fff;
+        margin-bottom: 40px;
+      }
+    }
+  }
+}
