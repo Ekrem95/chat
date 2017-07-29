@@ -14,7 +14,6 @@ router.get('/signup', (req, res) => {
 });
 
 router.get('*', ensureAuthenticated, (req, res) => {
-  console.log(req.user);
   res.sendFile(path.join(__dirname, '../src/public', 'index.html'));
 });
 

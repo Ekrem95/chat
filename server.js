@@ -15,16 +15,9 @@ const io = require('socket.io').listen(server);
 const morgan = require('morgan');
 const dotenv = require('dotenv');
 
+const db = require('./db/db');
+db(io);
 dotenv.load();
-mongoose.connect('mongodb://localhost/chat', { useMongoClient: true })
-  .then(db => {
-    io.on('connection', (socket) => {
-      console.log('Connected');
-    });
-  })
-  .catch(err => {
-    throw err;
-  });
 
 app.use(compression());
 app.use(bodyParser.json());

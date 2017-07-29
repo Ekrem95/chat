@@ -5,6 +5,7 @@ const UserSchema = mongoose.Schema({
   username: {
     type: String,
     index: true,
+    unique: true,
   },
   password: {
     type: String,
@@ -13,6 +14,7 @@ const UserSchema = mongoose.Schema({
     type: String,
     unique: true,
   },
+  messages: [{}],
 });
 
 const User = module.exports = mongoose.model('User', UserSchema);
