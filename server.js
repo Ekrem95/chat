@@ -15,9 +15,9 @@ const io = require('socket.io').listen(server);
 const morgan = require('morgan');
 const dotenv = require('dotenv');
 
+dotenv.load();
 const db = require('./db/db');
 db(io);
-dotenv.load();
 
 app.use(compression());
 app.use(bodyParser.json());
@@ -48,45 +48,3 @@ app.use('/api', require('./router/api'));
 app.use('/', require('./router/router'));
 
 server.listen(process.env.PORT || 3000);
-
-// io.on('connection', (socket) => {
-//   console.log('eko');
-// });
-
-// io.on('connection', (socket) => {
-//   let chat = db.collection('chats');
-//
-//   sendStatus = (s) => {
-//     socket.emit('status', s);
-//   };
-//
-//   chat.find().limit(100).sort({ _id: 1 }).toArray((err, res) => {
-//     if (err) throw err;
-//
-//     socket.emit('output', res);
-//   });
-//
-//   socket.on('input', (data) => {
-//     let name = data.name;
-//     let message = data.message;
-//
-//     if (name === '' || message === '') {
-//       sendStatus('Please enter a name and message');
-//     } else {
-//       chat.insert({ name: name, message: message }, () => {
-//         io.emit('output', [data]);
-//
-//         sendStatus({
-//           message: 'Message sent',
-//           clear: true,
-//         });
-//       });
-//     }
-//   });
-//
-//   socket.on('clear', (data) => {
-//     chat.remove({}, () => {
-//       socket.emit('Cleared');
-//     });
-//   });
-// });

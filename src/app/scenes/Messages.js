@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import request from 'superagent';
 
+// import io from 'socket.io-client';
+
 export default class Messages extends Component {
   constructor(props) {
     super(props);
@@ -10,10 +12,13 @@ export default class Messages extends Component {
       messages: null,
     };
     this.sendMessage = this.sendMessage.bind(this);
+    this.get = this.get.bind(this);
   }
 
   componentWillMount() {
     this.get();
+
+    // this.io();
   }
 
   getMessages(username) {
@@ -26,6 +31,21 @@ export default class Messages extends Component {
         this.setState({ messages: res.body.messages });
       });
   }
+
+  // io() {
+  //   let socket = io.connect('/');
+  //
+  //   if (socket !== undefined) {
+  //     console.log('Connected');
+  //
+  //     socket.on('dist', data => {
+  //       console.log(data);
+  //     });
+  //     socket.on('eko', data => {
+  //       console.log(data);
+  //     });
+  //   }
+  // }
 
   get() {
     request
@@ -65,6 +85,12 @@ export default class Messages extends Component {
           console.log(res);
         }
       });
+
+    // let socket = io.connect('/');
+    //
+    // if (socket !== undefined) {
+    //   socket.emit('message', pac);
+    // }
   }
 
   render() {
@@ -82,7 +108,7 @@ export default class Messages extends Component {
           <button onClick={this.sendMessage}>Send</button>
           {this.state.messages &&
             this.state.messages.map((m, i) => {
-              const color = this.state.user === m.from ? 'green' : 'blue';
+              const color = this.state.user === m.from ? 'green' : 'pink';
               const message = (
                 <p
                   style={{ background: color }}

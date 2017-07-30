@@ -24,7 +24,6 @@ router.get('/messages/', (req, res) => {
 });
 
 router.post('/messages/get/:name', (req, res) => {
-  console.log(req.body.with);
   User.findOne({ username: req.params.name }, (err, user) => {
     const messages = user.messages.filter(message => {
       const inludes = message.to === req.body.with || message.from === req.body.with;

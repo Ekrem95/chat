@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import request from 'superagent';
-import io from 'socket.io-client';
 
 export default class Index extends Component {
   constructor(props) {
@@ -11,12 +10,10 @@ export default class Index extends Component {
     };
     this.logout = this.logout.bind(this);
     this.getUser = this.getUser.bind(this);
-    this.io = this.io.bind(this);
   }
 
   componentWillMount() {
     this.getUser();
-    this.io();
   }
 
   getUser() {
@@ -30,10 +27,6 @@ export default class Index extends Component {
       .then(res => {
         this.setState({ users: res.body });
       });
-  }
-
-  io() {
-    let socket = io.connect('/');
   }
 
   logout() {
