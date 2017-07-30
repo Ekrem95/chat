@@ -5,32 +5,44 @@ export default class Messages extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      user: '',
-      sendTo: '',
+      user: null,
+      sendTo: null,
       messages: null,
     };
     this.sendMessage = this.sendMessage.bind(this);
   }
 
   componentWillMount() {
-    this.getMessages();
-    this.getUser();
+    this.get();
   }
 
-  getMessages() {
+  getMessages(username) {
     request
-      .get('/api/messages/' + this.props.location.pathname.split('/').pop())
+      .post('/api/messages/get/' + username)
+      .type('form')
+      .send({ with: this.state.sendTo })
+      .set('Accept', 'application/json')
       .then(res => {
-        console.log(res.body);
-        this.setState({ sendTo: res.body.username, messages: res.body.messages });
+        this.setState({ messages: res.body.messages });
       });
   }
 
-  getUser() {
+  get() {
     request
-      .get('/api/user/')
+      .get('/api/messageswith/' + this.props.location.pathname.split('/').pop())
       .then(res => {
-        this.setState({ user: res.body.username });
+        this.setState({ sendTo: res.body.username });
+      })
+      .catch(err => {
+        console.log(err);
+      })
+      .then(() => {
+        request
+          .get('/api/user')
+          .then(res => {
+            this.setState({ user: res.body.username });
+            this.getMessages(res.body.username);
+          });
       });
   }
 
@@ -42,7 +54,7 @@ export default class Messages extends Component {
     const pac = { message, from, to };
 
     request
-      .post('/api/messages/' + this.props.location.pathname.split('/').pop())
+      .post('/api/messages/' + this.state.username)
       .type('form')
       .send(pac)
       .set('Accept', 'application/json')

@@ -23,7 +23,7 @@ export default class Index extends Component {
     request
       .get('/api/user')
       .then(res => {
-        console.log(res.body);
+        // console.log(res.body);
         this.setState({ user: res.body });
       });
     request.get('/api/users')

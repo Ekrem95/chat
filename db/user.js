@@ -14,16 +14,7 @@ const UserSchema = mongoose.Schema({
     type: String,
     unique: true,
   },
-  messages: [{
-    with: String,
-    history: [{
-      to: String,
-      from: String,
-      message: String,
-    },
-  ],
-  },
-  ],
+  messages: [],
 });
 
 const User = module.exports = mongoose.model('User', UserSchema);
