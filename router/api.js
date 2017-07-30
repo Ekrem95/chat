@@ -31,20 +31,37 @@ router.get('/messages/:id', (req, res) => {
 
 router.post('/messages/:id', (req, res) => {
   const user = req.body.from;
-  User.update({ username: user },
+
+  User.findOneAndUpdate({ username: user },
   {
-    $push: {
-      messages: req.body,
-    },
+    $push: { 'messages.history': req.body },
+
+    // $set: { 'messages.with': req.body.to },
+
+    // $push: {
+    //   messages: {
+    //     // with: req.body.to,
+    //     history: req.body,
+    //   },
+    // },
+
   }, { upsert: false }, function (err, doc) {
       if (err) console.log(err);
     });
 
-  User.update({ _id: req.params.id },
+  User.findOneAndUpdate({ _id: req.params.id },
   {
-    $push: {
-      messages: req.body,
-    },
+    $push: { 'messages.history': req.body },
+
+    // $set: { 'messages.with': req.body.to },
+
+    // $push: {
+    //   messages: {
+    //     // with: req.body.from,
+    //     history: req.body,
+    //   },
+    // },
+
   }, { upsert: false }, function (err, doc) {
       if (err) console.log(err);
     });

@@ -7,7 +7,7 @@ export default class Messages extends Component {
     this.state = {
       user: '',
       sendTo: '',
-      messages: [],
+      messages: null,
     };
     this.sendMessage = this.sendMessage.bind(this);
   }
@@ -68,7 +68,7 @@ export default class Messages extends Component {
           }}
           ></textarea>
           <button onClick={this.sendMessage}>Send</button>
-          {this.state.messages.length &&
+          {this.state.messages &&
             this.state.messages.map((m, i) => {
               const color = this.state.user === m.from ? 'green' : 'blue';
               const message = (
