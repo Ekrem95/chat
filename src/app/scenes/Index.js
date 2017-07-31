@@ -5,7 +5,7 @@ export default class Index extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      user: {},
+      user: null,
       users: [],
     };
     this.logout = this.logout.bind(this);
@@ -17,12 +17,15 @@ export default class Index extends Component {
   }
 
   getUser() {
-    request
-      .get('/api/user')
-      .then(res => {
-        // console.log(res.body);
-        this.setState({ user: res.body });
-      });
+    // request
+    //   .get('/api/user')
+    //   .then(res => {
+    //     // console.log(res.body);
+    //     this.setState({ user: res.body });
+    //   });
+    const user = localStorage.getItem('user');
+    const userId = localStorage.getItem('userId');
+    this.setState({ user, userId });
     request.get('/api/users')
       .then(res => {
         this.setState({ users: res.body });
@@ -38,9 +41,11 @@ export default class Index extends Component {
       })
       .set('Accept', 'application/json')
       .then(res => {
-        console.log(res);
+        // console.log(res);
         if (res.statusCode === 200) {
           localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          localStorage.removeItem('userId');
           window.location.replace('/login');
         }
       });
@@ -54,7 +59,7 @@ export default class Index extends Component {
 
         {this.state.users &&
           this.state.users.map(user => {
-            if (user.id !== this.state.user.id) {
+            if (user.id !== this.state.userId) {
               const userInfo = (
                 <p
                   key={user.id}

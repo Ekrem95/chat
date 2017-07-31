@@ -12,19 +12,22 @@ module.exports = (io) => {
       io.to(socket.id).emit('id', socket.id);
 
       socket.on('message', message => {
-        console.log(message);
+        // console.log(message);
         const to = message.to;
         const id = history[to];
-        console.log(id);
+
+        // console.log(id);
         // io.sockets.emit('dist', message);
         socket.broadcast.to(id).emit('dist', message);
-        console.log(history);
+
+        // console.log(history);
       });
 
       socket.on('save id', obj => {
         const name = obj.user;
         history[name] = obj.id;
-        console.log(history);
+
+        // console.log(history);
       });
     });
   })

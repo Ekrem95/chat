@@ -43,13 +43,11 @@ export default class Messages extends Component {
     let socket = io.connect('/');
 
     if (socket !== undefined) {
-      console.log('Connected');
 
       socket.on('dist', message => {
         const messages = this.state.messages;
         messages.push(message);
         this.setState({ messages });
-        console.log(message);
       });
       socket.on('id', id => {
         const user = this.state.user;
@@ -71,12 +69,9 @@ export default class Messages extends Component {
         console.log(err);
       })
       .then(() => {
-        request
-          .get('/api/user')
-          .then(res => {
-            store.dispatch({ type: 'USER', payload: res.body.username });
-            this.getMessages(res.body.username);
-          });
+        const user = localStorage.getItem('user');
+        store.dispatch({ type: 'USER', payload: user });
+        this.getMessages(user);
       });
   }
 
@@ -95,8 +90,6 @@ export default class Messages extends Component {
       .end(function (err, res) {
         if (err) {
           console.log(err);
-        } else {
-          console.log(res);
         }
       });
 

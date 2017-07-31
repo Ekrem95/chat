@@ -31,6 +31,8 @@ export default class Login extends Component {
             });
           } else {
             localStorage.setItem('token', res.body.token);
+            localStorage.setItem('user', res.body.user);
+            localStorage.setItem('userId', res.body.userId);
             this.props.history.push('/');
           }
         });
