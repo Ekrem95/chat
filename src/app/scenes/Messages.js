@@ -18,14 +18,14 @@ export default class Messages extends Component {
       });
 
     this.get();
-
-    // this.io();
   }
 
   componentDidUpdate() {
     if (this.state.sendTo && this.state.user && this.state.messages) {
       this.io();
     }
+
+    window.scrollTo(0, document.body.scrollHeight);
   }
 
   getMessages(username) {
@@ -87,18 +87,18 @@ export default class Messages extends Component {
 
     const pac = { message, from, to };
 
-    // request
-    //   .post('/api/messages/' + this.state.username)
-    //   .type('form')
-    //   .send(pac)
-    //   .set('Accept', 'application/json')
-    //   .end(function (err, res) {
-    //     if (err) {
-    //       console.log(err);
-    //     } else {
-    //       console.log(res);
-    //     }
-    //   });
+    request
+      .post('/api/messages/' + this.state.username)
+      .type('form')
+      .send(pac)
+      .set('Accept', 'application/json')
+      .end(function (err, res) {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log(res);
+        }
+      });
 
     let socket = io.connect('/');
 
@@ -113,29 +113,28 @@ export default class Messages extends Component {
 
   render() {
     return (
-      <div>
+      <div className="messagesPage">
         <h1>Messages with {this.state.sendTo}</h1>
-        <textarea
-          ref="message"
-          style={{
-            width: '100vw',
-            resize: 'none',
-            height: 36,
-          }}
-          ></textarea>
-          <button onClick={this.sendMessage}>Send</button>
+        <div className="messages">
           {this.state.messages &&
             this.state.messages.map((m, i) => {
-              const color = this.state.user === m.from ? 'green' : 'pink';
+              const color = this.state.user === m.from ? 'from' : 'to';
               const message = (
-                <p
-                  style={{ background: color }}
+                <div
+                  className={color}
                   key={i}>{m.message}
-                </p>
+                </div>
               );
               return message;
             })
           }
+          </div>
+          <div className="input">
+          <textarea
+            ref="message"
+            ></textarea>
+            <button onClick={this.sendMessage}>Send</button>
+            </div>
       </div>
     );
   }

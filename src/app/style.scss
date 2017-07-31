@@ -4,9 +4,10 @@
   justify-content: center;
   align-items: center;
 }
+$background-color: #000;
 
 body{
-  background: #000;
+  background: $background-color;
   color: #fff;
   margin: 0;
   font-size: 16px;
@@ -52,6 +53,79 @@ body{
         background: rgb(189, 68, 207);
         color: #fff;
         margin-bottom: 40px;
+      }
+    }
+  }
+
+  .messagesPage{
+    display: flex;
+    flex-flow: column;
+    margin-bottom: 40px;
+
+    h1{
+      font-size: 1.5rem;
+      height: 32px;
+      text-align: center;
+      align-self: center;
+      position: fixed;
+      top:0;
+      background: rgb(12, 82, 147);
+      margin-top: 0;
+      width: 100vw;
+      margin-bottom: 10px;
+      box-shadow: 0px 2px 2px rgba(50,50, 150, 0.75);
+    }
+
+    .messages{
+      width: 90vw;
+      display: flex;
+      flex-flow: column;
+      align-self: center;
+      margin-top: 60px;
+
+      *{
+        width: 40vw;
+        padding: 6px;
+        border-radius: 6px;
+        margin: 3vw 6vw;
+      }
+
+      .from{
+        align-self: flex-start;
+        justify-content: center;
+        background: rgb(33, 150, 23);
+      }
+      .to{
+        align-self: flex-end;
+        justify-content: center;
+        background: rgb(13, 72, 173);
+      }
+    }
+    .input{
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      display: flex;
+      flex-flow: row;
+      flex-wrap: wrap;
+      background: $background-color;
+
+      textarea{
+        width: 76vw;
+        margin-right: 2vw;
+        height: 32px;
+        resize: none;
+        font-size: 1.1rem;
+        padding-top: 10px;
+      }
+
+      button{
+        border: none;
+        border-radius: 3px;
+        width: 20vw;
+        background: rgb(50, 196, 32);
+        color: #fff;
+        font-size: 1.1rem;
       }
     }
   }
