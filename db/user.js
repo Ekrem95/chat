@@ -15,6 +15,7 @@ const UserSchema = mongoose.Schema({
     unique: true,
   },
   messages: [],
+  history: [],
 });
 
 const User = module.exports = mongoose.model('User', UserSchema);

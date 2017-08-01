@@ -11,6 +11,13 @@ export default class Signup extends Component {
     this.signup = this.signup.bind(this);
   }
 
+  componentWillMount() {
+    if (localStorage.getItem('user') !== null) {
+      this.props.history.push('/');
+      return;
+    }
+  }
+
   signup() {
     const username = this.refs.username.value;
     const email = this.refs.email.value;

@@ -57,6 +57,52 @@ body{
     }
   }
 
+  .indexPage{
+    @include form-page-style;
+
+    textarea{
+      width: 76vw;
+      resize: none;
+      margin-bottom: 10px;
+      height: 22px;
+      padding-top: 6px;
+    }
+
+    .searchResults{
+      background: rgb(114, 7, 140);
+      width: 76vw;
+      border-radius: 6px;
+      margin: 20px;
+
+      p{
+        margin: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.27);
+        cursor: pointer;
+      }
+    }
+
+    button{
+      height: 26px;
+      border: none;
+      border-radius: 3px;
+      background: rgb(53, 67, 195);
+      color: #fff;
+    }
+
+    .latestMessages{
+      background: rgb(114, 7, 140);
+      width: 76vw;
+      border-radius: 6px;
+      margin: 20px;
+
+      h4, p{
+        margin: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.27);
+        cursor: pointer;
+      }
+    }
+  }
+
   .messagesPage{
     margin-bottom: 50px;
     @include form-page-style;

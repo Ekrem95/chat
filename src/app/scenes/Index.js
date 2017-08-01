@@ -7,12 +7,19 @@ export default class Index extends Component {
     this.state = {
       user: null,
       users: [],
+      messages: [],
     };
     this.logout = this.logout.bind(this);
     this.getUser = this.getUser.bind(this);
+    this.search = this.search.bind(this);
   }
 
   componentWillMount() {
+    if (localStorage.getItem('user') === null) {
+      this.props.history.push('/login');
+      return;
+    }
+
     this.getUser();
   }
 
@@ -26,10 +33,31 @@ export default class Index extends Component {
     const user = localStorage.getItem('user');
     const userId = localStorage.getItem('userId');
     this.setState({ user, userId });
-    request.get('/api/users')
+
+    request
+      .get(`/api/history/${user}`)
       .then(res => {
-        this.setState({ users: res.body });
+        if (res.body !== null) {
+          this.setState({ messages: res.body });
+        }
       });
+
+    // request.get('/api/users')
+    //   .then(res => {
+    //     this.setState({ users: res.body });
+    //   });
+  }
+
+  search() {
+    const name = this.refs.search.value;
+
+    if (name.length) {
+      request
+        .get(`/api/search-users/${name}`)
+        .then(res => {
+          this.setState({ users: res.body });
+        });
+    }
   }
 
   logout() {
@@ -53,24 +81,62 @@ export default class Index extends Component {
 
   render() {
     return (
-      <div>
+      <div className="indexPage">
         <h1>Index</h1>
         <p onClick={this.logout}>Logout</p>
+        <textarea ref="search"></textarea>
+        <button type="button" onClick={this.search}>Search Users</button>
 
         {this.state.users &&
           this.state.users.map(user => {
             if (user.id !== this.state.userId) {
               const userInfo = (
+                <div className="searchResults" key={user.id}>
                 <p
-                  key={user.id}
-                  onClick={() => {this.props.history.push(`/messages/${user.id}`);}}
+                  onClick={() => {
+                    const selectedUser = { username: user.username, id: user.id };
+                    const messages = this.state.messages;
+                    messages[selectedUser.username] = selectedUser.id;
+                    this.setState({ messages });
+
+                    request
+                      .post(`/api/history/${this.state.user}`)
+                      .type('form')
+                      .send({ username: user.username, id: user.id })
+                      .set('Accept', 'application/json')
+                      .end((err) => {
+                        if (err) console.log(err);
+                      });
+
+                    this.props.history.push(`/messages/${user.id}`);
+                  }}
                   >{user.username}
                 </p>
+                </div>
               );
               return userInfo;
             }
           })
         }
+        <div className="latestMessages">
+        {this.state.messages.length > 0 &&
+          <h4>Latest Messages</h4>
+        }
+        {this.state.messages.length > 0 &&
+          this.state.messages.map(m => {
+            const history = (
+              <div className="results" key={m.id}>
+                <p
+                  onClick={() => {
+                    this.props.history.push(`/messages/${m.id}`);
+                  }}
+                  >{m.username}</p>
+              </div>
+            );
+            return history;
+          })
+        }
+        </div>
       </div>
     );
   }

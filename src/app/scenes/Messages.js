@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import request from 'superagent';
-import { store } from '../reducer';
 
 import io from 'socket.io-client';
 
@@ -13,10 +12,13 @@ export default class Messages extends Component {
   }
 
   componentWillMount() {
-    store.subscribe(() => {
-        this.setState({ user: store.getState() });
-      });
+    if (localStorage.getItem('user') === null) {
+      this.props.history.push('/login');
+      return;
+    }
 
+    const user = localStorage.getItem('user');
+    this.setState({ user });
     this.get();
   }
 
@@ -70,7 +72,6 @@ export default class Messages extends Component {
       })
       .then(() => {
         const user = localStorage.getItem('user');
-        store.dispatch({ type: 'USER', payload: user });
         this.getMessages(user);
       });
   }

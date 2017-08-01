@@ -23,6 +23,20 @@ router.get('/messages/', (req, res) => {
   });
 });
 
+router.get('/search-users/:name', (req, res) => {
+  User.find({ username: { $regex: '.*' + req.params.name + '.*' } }, (err, users) => {
+    if (err) {
+      res.send(err);
+    } else {
+      let userList = [];
+      users.map(user => {
+        userList.push({ username: user.username, id: user._id });
+      });
+      res.send(userList);
+    }
+  });
+});
+
 router.post('/messages/get/:name', (req, res) => {
   User.findOne({ username: req.params.name }, (err, user) => {
     const messages = user.messages.filter(message => {
@@ -61,6 +75,29 @@ router.post('/messages/:name', (req, res) => {
   }, { upsert: false }, function (err, doc) {
       if (err) console.log(err);
     });
+});
+
+router.post('/history/:name', (req, res) => {
+  const name = req.params.name;
+
+  User.findOneAndUpdate({ username: name }, {
+    $addToSet: { history: req.body },
+  }, { upsert: false }, function (err, doc) {
+      if (err) console.log(err);
+    });
+});
+
+router.get('/history/:name', (req, res) => {
+  User.findOne({ username: req.params.name }, (err, user) => {
+    if (err) {
+      console.log(err);
+    } else if (!user) {
+      res.send('No user found');
+    } else {
+      res.send(user.history);
+    }
+
+  });
 });
 
 let filterUsers = (users => {

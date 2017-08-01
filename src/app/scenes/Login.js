@@ -10,6 +10,13 @@ export default class Login extends Component {
     this.login = this.login.bind(this);
   }
 
+  componentWillMount() {
+    if (localStorage.getItem('user') !== null) {
+      this.props.history.push('/');
+      return;
+    }
+  }
+
   login() {
     if (this.refs.email.value.length > 1 && this.refs.password.value.length > 1) {
 
