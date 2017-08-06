@@ -10,6 +10,7 @@ export default class Index extends Component {
       history: null,
       messages: null,
       lastTimeOnline: null,
+      unread: {},
     };
     this.logout = this.logout.bind(this);
     this.getUser = this.getUser.bind(this);
@@ -24,17 +25,17 @@ export default class Index extends Component {
 
     this.getUser();
 
-    window.onbeforeunload = function () {
-      const user = localStorage.getItem('user');
-      request
-        .post('/api/lastTimeOnline/' + user)
-        .type('form')
-        .send({ time: Date.now() })
-        .set('Accept', 'application/json')
-        .end(err => {
-          console.log(err);
-        });
-    };
+    // window.onbeforeunload = function () {
+    //   const user = localStorage.getItem('user');
+    //   request
+    //     .post('/api/lastTimeOnline/' + user)
+    //     .type('form')
+    //     .send({ time: Date.now() })
+    //     .set('Accept', 'application/json')
+    //     .end(err => {
+    //       console.log(err);
+    //     });
+    // };
   }
 
   getUser() {
@@ -58,6 +59,23 @@ export default class Index extends Component {
             lastTimeOnline: res.body.lastTimeOnline,
           });
         }
+
+        console.log(this.state.lastTimeOnline);
+
+        this.state.messages.map(message => {
+          if (message.time > this.state.lastTimeOnline) {
+            const unread = Object.assign({}, this.state.unread);
+            if (!unread[message.from]) {
+              unread[message.from] = 1;
+              this.setState({ unread });
+            } else {
+              unread[message.from] += 1;
+              this.setState({ unread });
+            }
+
+            console.log(this.state.unread);
+          }
+        });
       });
 
     // request.get('/api/users')
@@ -149,13 +167,17 @@ export default class Index extends Component {
             });
 
             const history = (
-              <div className="results" key={m.id}>
-                <p
-                  onClick={() => {
-                    this.props.history.push(`/messages/${m.id}`, {
-                      messages: messages, with: m.username, });
-                  }}
-                  >{m.username}</p>
+              <div
+                onClick={() => {
+                  this.props.history.push(`/messages/${m.id}`, {
+                    messages: messages, with: m.username, });
+                }}
+
+                className="results" key={m.id}>
+                <div>
+                  <span className="username">{m.username}</span>
+                  <span className="unread">{this.state.unread[m.username]}</span>
+                </div>
               </div>
             );
             return history;

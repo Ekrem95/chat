@@ -23,9 +23,7 @@ export default class Messages extends Component {
   }
 
   componentDidUpdate() {
-    if (this.state.sendTo && this.state.user && this.state.messages) {
-      this.io();
-    }
+    this.connectIO();
 
     window.scrollTo(0, document.body.scrollHeight);
   }
@@ -61,6 +59,12 @@ export default class Messages extends Component {
     }
   }
 
+  connectIO() {
+    if (this.state.sendTo && this.state.user && this.state.messages) {
+      this.io();
+    }
+  }
+
   get() {
     if (this.props.location.state === undefined) {
       request
@@ -83,6 +87,7 @@ export default class Messages extends Component {
       });
       let wait = setTimeout(() => {
         window.scrollTo(0, document.body.scrollHeight);
+        this.connectIO();
       }, 100);
     }
   }
