@@ -100,6 +100,30 @@ router.get('/history/:name', (req, res) => {
   });
 });
 
+router.get('/all/:name', (req, res) => {
+  User.findOne({ username: req.params.name }, (err, user) => {
+    if (err) {
+      console.log(err);
+    } else if (!user) {
+      res.send('No user found');
+    } else {res.send({
+        history: user.history,
+        messages: user.messages,
+        lastTimeOnline: user.lastTimeOnline,
+      });
+    }
+  });
+});
+
+router.post('/lastTimeOnline/:name', (req, res) => {
+  User.findOneAndUpdate({ username: req.params.name }, {
+    $set: { lastTimeOnline: req.body.time },
+
+  }, { upsert: false }, function (err, doc) {
+      if (err) console.log(err);
+    });
+});
+
 let filterUsers = (users => {
   let arr = [];
   users.map(user => {

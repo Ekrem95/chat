@@ -62,18 +62,29 @@ export default class Messages extends Component {
   }
 
   get() {
-    request
-      .get('/api/messageswith/' + this.props.location.pathname.split('/').pop())
-      .then(res => {
-        this.setState({ sendTo: res.body.username });
-      })
-      .catch(err => {
-        console.log(err);
-      })
-      .then(() => {
-        const user = localStorage.getItem('user');
-        this.getMessages(user);
+    if (this.props.location.state === undefined) {
+      request
+        .get('/api/messageswith/' + this.props.location.pathname.split('/').pop())
+        .then(res => {
+          this.setState({ sendTo: res.body.username });
+        })
+        .catch(err => {
+          console.log(err);
+        })
+        .then(() => {
+          const user = localStorage.getItem('user');
+          this.getMessages(user);
+        });
+    } else {
+      const state = this.props.location.state;
+      this.setState({
+        sendTo: state.with,
+        messages: state.messages,
       });
+      let wait = setTimeout(() => {
+        window.scrollTo(0, document.body.scrollHeight);
+      }, 100);
+    }
   }
 
   sendMessage() {

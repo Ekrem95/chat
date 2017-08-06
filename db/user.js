@@ -16,6 +16,7 @@ const UserSchema = mongoose.Schema({
   },
   messages: [],
   history: [],
+  lastTimeOnline: String,
 });
 
 const User = module.exports = mongoose.model('User', UserSchema);

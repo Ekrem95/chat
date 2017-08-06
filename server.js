@@ -11,9 +11,9 @@ const LocalStrategy = require('passport-local').Strategy;
 const mongoose = require('mongoose');
 const compression = require('compression');
 const server = require('http').createServer(app);
-const io = require('socket.io').listen(server, {pingTimeout: 30000});
+const io = require('socket.io').listen(server, { pingTimeout: 30000 });
 const morgan = require('morgan');
-const cors = require('cors')
+const cors = require('cors');
 const dotenv = require('dotenv');
 
 dotenv.load();
@@ -21,7 +21,7 @@ const db = require('./db/db');
 db(io);
 
 app.use(compression());
-app.use(cors())
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());

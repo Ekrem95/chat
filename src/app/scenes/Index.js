@@ -7,7 +7,9 @@ export default class Index extends Component {
     this.state = {
       user: null,
       users: [],
-      messages: [],
+      history: null,
+      messages: null,
+      lastTimeOnline: null,
     };
     this.logout = this.logout.bind(this);
     this.getUser = this.getUser.bind(this);
@@ -21,6 +23,18 @@ export default class Index extends Component {
     }
 
     this.getUser();
+
+    window.onbeforeunload = function () {
+      const user = localStorage.getItem('user');
+      request
+        .post('/api/lastTimeOnline/' + user)
+        .type('form')
+        .send({ time: Date.now() })
+        .set('Accept', 'application/json')
+        .end(err => {
+          console.log(err);
+        });
+    };
   }
 
   getUser() {
@@ -35,10 +49,14 @@ export default class Index extends Component {
     this.setState({ user, userId });
 
     request
-      .get(`/api/history/${user}`)
+      .get(`/api/all/${user}`)
       .then(res => {
         if (res.body !== null) {
-          this.setState({ messages: res.body });
+          this.setState({
+            history: res.body.history,
+            messages: res.body.messages,
+            lastTimeOnline: res.body.lastTimeOnline,
+          });
         }
       });
 
@@ -119,16 +137,23 @@ export default class Index extends Component {
           })
         }
         <div className="latestMessages">
-        {this.state.messages.length > 0 &&
+        {this.state.history &&
           <h4>Latest Messages</h4>
         }
-        {this.state.messages.length > 0 &&
-          this.state.messages.map(m => {
+        {this.state.history &&
+          this.state.history.map(m => {
+
+            const messages = this.state.messages.filter(message => {
+              const valid = message.with === m.username;
+              return valid;
+            });
+
             const history = (
               <div className="results" key={m.id}>
                 <p
                   onClick={() => {
-                    this.props.history.push(`/messages/${m.id}`);
+                    this.props.history.push(`/messages/${m.id}`, {
+                      messages: messages, with: m.username, });
                   }}
                   >{m.username}</p>
               </div>
