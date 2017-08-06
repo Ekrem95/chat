@@ -88,7 +88,7 @@ export default class Messages extends Component {
       let wait = setTimeout(() => {
         window.scrollTo(0, document.body.scrollHeight);
         this.connectIO();
-      }, 100);
+      }, 50);
     }
   }
 

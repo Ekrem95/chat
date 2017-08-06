@@ -79,12 +79,33 @@ router.post('/messages/:name', (req, res) => {
 
 router.post('/history/:name', (req, res) => {
   const name = req.params.name;
+  const senderId = req.body.senderId;
 
   User.findOneAndUpdate({ username: name }, {
-    $addToSet: { history: req.body },
+    $addToSet: { history: { id: req.body.id, username: req.body.username } },
   }, { upsert: false }, function (err, doc) {
       if (err) console.log(err);
     });
+
+  User.findOneAndUpdate({ username: req.body.username }, {
+    $addToSet: { history: { id: senderId, username: name } },
+  }, { upsert: false }, function (err, doc) {
+      if (err) console.log(err);
+    });
+});
+
+router.post('/history/delete/:name', (req, res) => {
+  User.findOneAndUpdate({ username: req.params.name }, {
+    $pull: { history: req.body },
+  }, { upsert: false }, function (err, doc) {
+        if (err) console.log(err);
+      });
+
+  User.findOneAndUpdate({ username: req.params.name }, {
+    $pull: { messages: { with: req.body.username } },
+  }, { upsert: false }, function (err, doc) {
+        if (err) console.log(err);
+      });
 });
 
 router.get('/history/:name', (req, res) => {

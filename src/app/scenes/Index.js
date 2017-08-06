@@ -25,17 +25,17 @@ export default class Index extends Component {
 
     this.getUser();
 
-    // window.onbeforeunload = function () {
-    //   const user = localStorage.getItem('user');
-    //   request
-    //     .post('/api/lastTimeOnline/' + user)
-    //     .type('form')
-    //     .send({ time: Date.now() })
-    //     .set('Accept', 'application/json')
-    //     .end(err => {
-    //       console.log(err);
-    //     });
-    // };
+    window.onbeforeunload = function () {
+      const user = localStorage.getItem('user');
+      request
+        .post('/api/lastTimeOnline/' + user)
+        .type('form')
+        .send({ time: Date.now() })
+        .set('Accept', 'application/json')
+        .end(err => {
+          // console.log(err);
+        });
+    };
   }
 
   getUser() {
@@ -59,8 +59,6 @@ export default class Index extends Component {
             lastTimeOnline: res.body.lastTimeOnline,
           });
         }
-
-        console.log(this.state.lastTimeOnline);
 
         this.state.messages.map(message => {
           if (message.time > this.state.lastTimeOnline) {
@@ -135,10 +133,12 @@ export default class Index extends Component {
                     messages[selectedUser.username] = selectedUser.id;
                     this.setState({ messages });
 
+                    const senderId = localStorage.getItem('userId');
+
                     request
                       .post(`/api/history/${this.state.user}`)
                       .type('form')
-                      .send({ username: user.username, id: user.id })
+                      .send({ username: user.username, id: user.id, senderId })
                       .set('Accept', 'application/json')
                       .end((err) => {
                         if (err) console.log(err);
@@ -167,17 +167,41 @@ export default class Index extends Component {
             });
 
             const history = (
-              <div
-                onClick={() => {
-                  this.props.history.push(`/messages/${m.id}`, {
-                    messages: messages, with: m.username, });
-                }}
-
-                className="results" key={m.id}>
-                <div>
+              <div className="results" key={m.id}>
+                <div
+                  onClick={() => {
+                    this.props.history.push(`/messages/${m.id}`, {
+                      messages: messages, with: m.username, });
+                  }}
+                  >
                   <span className="username">{m.username}</span>
                   <span className="unread">{this.state.unread[m.username]}</span>
                 </div>
+                <span
+                  onClick={() => {
+                    let history = this.state.history;
+                    let selected;
+
+                    for (let i = 0; i < history.length; i++) {
+                      if (history[i].username === m.username) {
+                        selected = i;
+                      }
+                    }
+
+                    history.splice(selected, 1);
+
+                    this.setState({ history });
+
+                    request
+                      .post(`/api/history/delete/${this.state.user}`)
+                      .type('form')
+                      .send({ username: m.username, id: m.id })
+                      .set('Accept', 'application/json')
+                      .end((err) => {
+                        if (err) console.log(err);
+                      });
+                  }}
+                  >Delete</span>
               </div>
             );
             return history;

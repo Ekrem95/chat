@@ -101,6 +101,9 @@ body{
       }
 
       div {
+        display: flex;
+        flex-flow: row;
+
         div{
           display: flex;
           flex:1;
@@ -121,6 +124,10 @@ body{
             flex: 2;
             padding: 6px 20px;
           }
+        }
+
+        span {
+          padding: 12px 20px;
         }
       }
     }
