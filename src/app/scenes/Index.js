@@ -57,7 +57,20 @@ export default class Index extends Component {
         const messages = this.state.messages;
         messages.push(message);
         this.setState({ messages });
-        console.log(this.state.messages);
+
+        const history = this.state.history;
+        let idList = [];
+
+        for (var i = 0; i < history.length; i++) {
+          idList.push(history[i].id);
+        }
+
+        const particle = { username: message.from, id: message.userId };
+
+        if (idList.indexOf(particle.id) < 0) {
+          this.getUser();
+        }
+
       });
       socket.on('id', id => {
         const user = this.state.user;

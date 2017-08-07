@@ -124,14 +124,31 @@ export default class Messages extends Component {
 
     let socket = io.connect('/');
 
+    const userId = localStorage.getItem('userId');
+    const pac2 = Object.assign({}, pac, { userId });
+
     if (socket !== undefined) {
-      socket.emit('message', pac);
+      socket.emit('message', pac2);
     }
 
     const messages = this.state.messages;
     messages.push(pac);
     this.setState(messages);
     this.refs.message.value = '';
+
+    const senderId = localStorage.getItem('userId');
+    request
+      .post(`/api/history/${this.state.user}`)
+      .type('form')
+      .send({
+        username: this.state.sendTo,
+        id: this.props.location.pathname.split('/').pop(),
+        senderId,
+      })
+      .set('Accept', 'application/json')
+      .end((err) => {
+        if (err) console.log(err);
+      });
   }
 
   render() {
