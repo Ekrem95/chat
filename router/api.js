@@ -57,8 +57,12 @@ router.post('/messages/:name', (req, res) => {
   let message = req.body;
   const time = Date.now();
 
-  const sender = Object.assign({}, message, { with: message.to, time: time });
-  const receiver = Object.assign({}, message, { with: message.from, time: time });
+  const sender = Object.assign(
+    {}, message, { with: message.to, time: time }
+  );
+  const receiver = Object.assign(
+    {}, message, { with: message.from, time: time, seen: false }
+  );
 
   User.findOneAndUpdate({ username: sender.from },
   {
@@ -144,6 +148,24 @@ router.post('/lastTimeOnline/:name', (req, res) => {
       if (err) console.log(err);
     });
 });
+
+router.post('/seen/:name', (req, res) => {
+    User.findOne({ username: req.params.name }, (err, user) => {
+      if (err) {console.log(err);} else if (!user) {console.log('No user found');} else {
+        user.messages.forEach(message => {
+          if (message.with === req.body.with && message.seen === false) {
+            message.seen = true;
+          }
+        });
+
+        User.findOneAndUpdate({ username: user.username }, {
+          $set: { messages: user.messages },
+        }, { upsert: false }, function (err, doc) {
+            if (err) console.log(err);
+          });
+      }
+    });
+  });
 
 let filterUsers = (users => {
   let arr = [];

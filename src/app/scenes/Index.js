@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import request from 'superagent';
+import io from 'socket.io-client';
 
 export default class Index extends Component {
   constructor(props) {
@@ -38,6 +39,36 @@ export default class Index extends Component {
     };
   }
 
+  io() {
+    let socket = io.connect('/');
+
+    if (socket !== undefined) {
+
+      socket.on('dist', message => {
+        const unread = Object.assign({}, this.state.unread);
+        if (!unread[message.from]) {
+          unread[message.from] = 1;
+          this.setState({ unread });
+        } else {
+          unread[message.from] += 1;
+          this.setState({ unread });
+        }
+
+        const messages = this.state.messages;
+        messages.push(message);
+        this.setState({ messages });
+        console.log(this.state.messages);
+      });
+      socket.on('id', id => {
+        const user = this.state.user;
+        if (user !== undefined && user !== null) {
+          socket.emit('save id', { user: this.state.user, id });
+        }
+
+      });
+    }
+  }
+
   getUser() {
     // request
     //   .get('/api/user')
@@ -60,9 +91,10 @@ export default class Index extends Component {
           });
         }
 
+        const unread = Object.assign({}, this.state.unread);
+
         this.state.messages.map(message => {
-          if (message.time > this.state.lastTimeOnline) {
-            const unread = Object.assign({}, this.state.unread);
+          if (message.seen === false) {
             if (!unread[message.from]) {
               unread[message.from] = 1;
               this.setState({ unread });
@@ -70,16 +102,11 @@ export default class Index extends Component {
               unread[message.from] += 1;
               this.setState({ unread });
             }
-
-            console.log(this.state.unread);
           }
         });
-      });
 
-    // request.get('/api/users')
-    //   .then(res => {
-    //     this.setState({ users: res.body });
-    //   });
+        this.io();
+      });
   }
 
   search() {
@@ -144,7 +171,9 @@ export default class Index extends Component {
                         if (err) console.log(err);
                       });
 
-                    this.props.history.push(`/messages/${user.id}`);
+                    this.props.history.push(`/messages/${user.id}`, {
+                      with: user.username,
+                    });
                   }}
                   >{user.username}
                 </p>

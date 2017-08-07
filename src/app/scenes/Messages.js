@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import request from 'superagent';
-
 import io from 'socket.io-client';
 
 export default class Messages extends Component {
@@ -9,6 +8,9 @@ export default class Messages extends Component {
     this.state = {};
     this.sendMessage = this.sendMessage.bind(this);
     this.get = this.get.bind(this);
+
+    this.user = localStorage.getItem('user');
+    this.with = this.props.location.state.with;
   }
 
   componentWillMount() {
@@ -90,6 +92,16 @@ export default class Messages extends Component {
         this.connectIO();
       }, 50);
     }
+
+    const lastSeen = { time: Date.now(), with: this.with };
+    request
+      .post('/api/seen/' + this.user)
+      .type('form')
+      .send(lastSeen)
+      .set('Accept', 'application/json')
+      .end(err => {
+        console.log(err);
+      });
   }
 
   sendMessage() {
@@ -100,7 +112,7 @@ export default class Messages extends Component {
     const pac = { message, from, to };
 
     request
-      .post('/api/messages/' + this.state.username)
+      .post('/api/messages/' + this.state.user)
       .type('form')
       .send(pac)
       .set('Accept', 'application/json')
@@ -119,6 +131,7 @@ export default class Messages extends Component {
     const messages = this.state.messages;
     messages.push(pac);
     this.setState(messages);
+    this.refs.message.value = '';
   }
 
   render() {
