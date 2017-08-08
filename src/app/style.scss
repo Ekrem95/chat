@@ -17,16 +17,15 @@ body{
     @include form-page-style;
     margin-top: 60px;
 
+    * {
+      max-width: 400px;
+    }
+
     .link{
-      width: 100vw;
-      background: rgb(189, 68, 207);
-      color: #fff;
-      height: 30px;
+      color: #ddd;
       font-size: 1.1rem;
-      border: none;
-      position: fixed;
-      bottom: 0;
-      left: 0;
+      text-align: center;
+      margin-top: -20px;
     }
 
     form{
@@ -60,6 +59,10 @@ body{
   .indexPage{
     @include form-page-style;
 
+    *{
+      max-width: 500px;
+    }
+
     textarea{
       width: 76vw;
       resize: none;
@@ -69,7 +72,7 @@ body{
     }
 
     .searchResults{
-      background: rgb(114, 7, 140);
+      background: rgb(7, 64, 140);
       width: 76vw;
       border-radius: 6px;
       margin: 20px;

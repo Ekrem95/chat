@@ -49,14 +49,6 @@ export default class Login extends Component {
   render() {
     return (
       <div className="login">
-        <button
-          className="link"
-          onClick={
-            () => {
-              this.props.history.push('/signup');
-            }
-          }
-          >Signup</button>
           <h1>Login</h1>
           { this.state.error && <p>{this.state.error}</p> }
         <form>
@@ -77,6 +69,15 @@ export default class Login extends Component {
              />
           </div>
           <button type="button" onClick={this.login}>Login</button>
+          <div
+            className="link"
+            onClick={
+              () => {
+                this.props.history.push('/signup');
+              }
+            }>
+              <h6>Sign up</h6>
+            </div>
         </form>
       </div>
     );

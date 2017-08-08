@@ -55,14 +55,6 @@ export default class Signup extends Component {
   render() {
     return (
       <div className="login">
-        <button
-          className="link"
-          onClick={
-            () => {
-              this.props.history.push('/login');
-            }
-          }
-          >Login</button>
           <h1>Sign up</h1>
           {this.state.errors &&
           this.state.errors.map((error, i) => {
@@ -101,6 +93,15 @@ export default class Signup extends Component {
               type="button"
               onClick={this.signup}
               >Signup</button>
+              <div
+                className="link"
+                onClick={
+                  () => {
+                    this.props.history.push('/login');
+                  }
+                }>
+                  <h6>Login</h6>
+                </div>
           </form>
       </div>
     );

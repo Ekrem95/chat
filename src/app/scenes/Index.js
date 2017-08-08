@@ -154,6 +154,7 @@ export default class Index extends Component {
   }
 
   render() {
+    console.log(this.state.messages);
     return (
       <div className="indexPage">
         <h1>Index</h1>
@@ -164,6 +165,12 @@ export default class Index extends Component {
         {this.state.users &&
           this.state.users.map(user => {
             if (user.id !== this.state.userId) {
+
+              const messagesProp = this.state.messages.filter(message => {
+                const valid = message.with === user.username;
+                return valid;
+              });
+
               const userInfo = (
                 <div className="searchResults" key={user.id}>
                 <p
@@ -185,7 +192,7 @@ export default class Index extends Component {
                       });
 
                     this.props.history.push(`/messages/${user.id}`, {
-                      with: user.username,
+                      with: user.username, messages: messagesProp,
                     });
                   }}
                   >{user.username}
