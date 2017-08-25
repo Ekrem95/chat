@@ -83,12 +83,6 @@ export default class Index extends Component {
   }
 
   getUser() {
-    // request
-    //   .get('/api/user')
-    //   .then(res => {
-    //     // console.log(res.body);
-    //     this.setState({ user: res.body });
-    //   });
     const user = localStorage.getItem('user');
     const userId = localStorage.getItem('userId');
     this.setState({ user, userId });
@@ -154,12 +148,16 @@ export default class Index extends Component {
   }
 
   render() {
-    console.log(this.state.messages);
     return (
       <div className="indexPage">
         <h1>Index</h1>
         <p onClick={this.logout}>Logout</p>
-        <textarea ref="search"></textarea>
+        <textarea
+          onKeyUp={() => {
+            this.search();
+          }}
+
+          ref="search"></textarea>
         <button type="button" onClick={this.search}>Search Users</button>
 
         {this.state.users &&
@@ -208,7 +206,7 @@ export default class Index extends Component {
           <h4>Latest Messages</h4>
         }
         {this.state.history &&
-          this.state.history.map(m => {
+          this.state.history.map((m, i) => {
 
             const messages = this.state.messages.filter(message => {
               const valid = message.with === m.username;
@@ -216,7 +214,7 @@ export default class Index extends Component {
             });
 
             const history = (
-              <div className="results" key={m.id}>
+              <div className="results" key={i}>
                 <div
                   onClick={() => {
                     this.props.history.push(`/messages/${m.id}`, {

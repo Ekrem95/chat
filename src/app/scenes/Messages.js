@@ -56,7 +56,6 @@ export default class Messages extends Component {
         if (user !== undefined && user !== null) {
           socket.emit('save id', { user: this.state.user, id });
         }
-
       });
     }
   }
@@ -171,6 +170,12 @@ export default class Messages extends Component {
           </div>
           <div className="input">
           <textarea
+            onKeyUp={(e) => {
+              if (e.keyCode === 13) {
+                this.sendMessage();
+              }
+            }}
+
             ref="message"
             ></textarea>
             <button onClick={this.sendMessage}>Send</button>
